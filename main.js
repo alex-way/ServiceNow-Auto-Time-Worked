@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Time Worked Duration
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Auto Sets the Time Worked Duration to 2 Minutes.
 // @author       You
 // @match        https://*.service-now.com/*
@@ -13,28 +13,37 @@
 (function() {
     'use strict';
     function waitForElm(selector) {
-    return new Promise(resolve => {
-        if (document.querySelector(selector)) {
-            return resolve(document.querySelector(selector));
-        }
-
-        const observer = new MutationObserver(mutations => {
+        return new Promise(resolve => {
             if (document.querySelector(selector)) {
-                resolve(document.querySelector(selector));
-                observer.disconnect();
+                return resolve(document.querySelector(selector));
             }
-        });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
+            const observer = new MutationObserver(mutations => {
+                if (document.querySelector(selector)) {
+                    resolve(document.querySelector(selector));
+                    observer.disconnect();
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
         });
-    });
-}
+    }
     const selector = `[title="Minutes"]`;
+    const submitButtonsQS = `button[type="submit"]`;
+
     waitForElm(selector).then((elm) => {
-        elm.value = "02";
-        elm.focus();
-        elm.blur();
+        const submitButtons = document.querySelectorAll(submitButtonsQS);
+        submitButtons.forEach((e) => {
+            e.addEventListener("mousedown",() => {
+                if (elm.value == "00") {
+                      elm.value = "02";
+                      elm.focus();
+                       elm.blur();
+                }
+           });
+        });
     })
 })();
