@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Auto Time Worked Duration
 // @namespace    http://tampermonkey.net/
-// @version      1.0
+// @version      1.1
 // @description  Auto Sets the Time Worked Duration to 2 Minutes.
 // @author       You
 // @match        https://*.service-now.com/*
@@ -34,5 +34,7 @@
     const selector = `[title="Minutes"]`;
     waitForElm(selector).then((elm) => {
         elm.value = "02";
-    });
+        elm.focus();
+        elm.blur();
+    })
 })();
